@@ -55,34 +55,15 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: routing-based caching strategy
+// Fetch: temporarily bypass cache — always go to network
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') return;
 
-  // App shell: cache-first
-  if (SHELL_URLs.includes(url.pathname) || SHELL_URLs.includes(url.href)) {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
-
-  // Static assets from glassy-liquid CDN or Google Fonts: cache-first
-  if (url.hostname.includes('unpkg.com') || url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
-    event.respondWith(cacheFirst(request));
-    return;
-  }
-
-  // Data/components/views: network-first with cache fallback
-  if (CONTENT_URL_PATTERNS.some((p) => url.pathname.includes(p))) {
-    event.respondWith(networkFirst(request));
-    return;
-  }
-
-  // Everything else: network-first
-  event.respondWith(networkFirst(request));
+  // Temporarily disabled: always fetch from network, no cache
+  event.respondWith(fetch(request));
 });
 
 /**
