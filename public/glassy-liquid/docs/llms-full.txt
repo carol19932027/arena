@@ -1,0 +1,1336 @@
+# glassy-liquid
+
+> Liquid Glass for the web: refraction, specular light, and the iOS 26 controls as Web Components, with React, Vue, and Svelte bindings.
+
+Docs site: https://9und30.github.io/glassy-liquid/
+
+Every control is a custom element (`<glass-button>`, `<glass-switch>`, ...). The React, Vue, and Svelte components wrap those elements and are generated from one binding table, so they have the same names, props, defaults, and events. React callbacks such as `onCheckedChange` are `v-model:checked` in Vue and `bind:checked` in Svelte. Chromium refracts the live page behind the glass. Safari, every iOS browser, and Firefox show a frosted fallback unless the glass sits inside a `<glass-scene>` that names its backdrop (an image URL in `src`, or a `glass-backdrop` child).
+
+## Install
+
+```sh
+npm install glassy-liquid
+```
+
+## CDN
+
+The `glassy-liquid/cdn` export is `dist/glassy-liquid.min.js`. The script registers every element. `src` is any image URL.
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/glassy-liquid@0.1/dist/glassy-liquid.min.js"></script>
+
+<glass-scene src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg/960px-Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg" style="height: 100vh; background: linear-gradient(160deg, #9bb7c9, #e7eef2)">
+  <glass-button variant="prominent">Continue</glass-button>
+  <glass-switch checked aria-label="Wi-Fi"></glass-switch>
+</glass-scene>
+```
+
+## Export map
+
+- `glassy-liquid`: `glass()`, `attachPress`, and the engine
+- `glassy-liquid/elements`: registers every custom element
+- `glassy-liquid/react`
+- `glassy-liquid/vue`
+- `glassy-liquid/svelte`
+- `glassy-liquid/svelte/actions`
+- `glassy-liquid/components/*`: one module per component
+- `glassy-liquid/scene`: the scene element on its own
+- `glassy-liquid/cdn`: the minified bundle
+- `glassy-liquid/package.json`: package metadata, not a runtime entry
+
+## Scene image
+
+`src` on `glass-scene` accepts any image URL. The URL below is a public CC0 photograph, so the example works when pasted. The scene also paints `linear-gradient(160deg, #9bb7c9, #e7eef2)` when the image fails, and it hides the broken-image icon.
+
+https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg/960px-Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg
+
+## Web Components
+
+With a bundler such as Vite. Without a build step, use the CDN script above: a bare `import "glassy-liquid/elements"` only resolves through a bundler or an import map.
+
+```html
+<script type="module">
+  import "glassy-liquid/elements";
+</script>
+
+<glass-scene src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg/960px-Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg" style="height: 100vh; background: linear-gradient(160deg, #9bb7c9, #e7eef2)">
+  <glass-button variant="prominent">Continue</glass-button>
+  <glass-switch checked aria-label="Wi-Fi"></glass-switch>
+</glass-scene>
+```
+
+## React
+
+```tsx
+"use client";
+
+import { useState } from "react";
+import { GlassScene, GlassButton, GlassSwitch } from "glassy-liquid/react";
+
+export function Welcome() {
+  const [on, setOn] = useState(true);
+  return (
+    <GlassScene src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg/960px-Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg" style={{ height: "100vh", background: "linear-gradient(160deg, #9bb7c9, #e7eef2)" }}>
+      <GlassButton variant="prominent">Continue</GlassButton>
+      <GlassSwitch checked={on} onCheckedChange={setOn} aria-label="Wi-Fi" />
+    </GlassScene>
+  );
+}
+```
+
+## Vue
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { GlassScene, GlassButton, GlassSwitch } from "glassy-liquid/vue";
+
+const on = ref(true);
+</script>
+
+<template>
+  <GlassScene src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg/960px-Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg" style="height: 100vh; background: linear-gradient(160deg, #9bb7c9, #e7eef2)">
+    <GlassButton variant="prominent">Continue</GlassButton>
+    <GlassSwitch v-model:checked="on" aria-label="Wi-Fi" />
+  </GlassScene>
+</template>
+```
+
+## Svelte
+
+```svelte
+<script>
+  import { GlassScene, GlassButton, GlassSwitch } from "glassy-liquid/svelte";
+  let on = true;
+</script>
+
+<GlassScene src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg/960px-Iceberg_reflection_in_J%C3%B6kuls%C3%A1rl%C3%B3n_%28Unsplash%29.jpg" style="height: 100vh; background: linear-gradient(160deg, #9bb7c9, #e7eef2)">
+  <GlassButton variant="prominent">Continue</GlassButton>
+  <GlassSwitch bind:checked={on} aria-label="Wi-Fi" />
+</GlassScene>
+```
+
+## Next.js and server rendering
+
+The React entry (`glassy-liquid/react`) is a Client Component: the file starts with `"use client"`. In the Next.js App Router, import the components from a Client Component.
+
+The React, Vue, and Svelte bindings render `defer-hydration` on each element and remove it after hydration. While the attribute is present the element stays inert, so server markup matches the hydrated tree.
+
+Every entry point is safe to import on the server. Custom elements register only in the browser, where `customElements` exists, so importing `glassy-liquid`, `glassy-liquid/elements`, or a component module from code the server evaluates does not throw. `glass()`, `useGlass()`, and `attachPress()` touch the DOM, so call them in an effect or in `onMount`, as the playground snippets do.
+
+## Docs
+
+- [llms-full.txt](./llms-full.txt): this file plus the API reference, theming, and every component in every framework
+- [README.md](../../README.md): the full guide shipped with the package
+- [Home](https://9und30.github.io/glassy-liquid/): what the library does and the live hero, on the docs site
+- [Components](https://9und30.github.io/glassy-liquid/components.html): every component with Web Components, React, Vue, and Svelte code, on the docs site
+- [Playground](https://9und30.github.io/glassy-liquid/playground.html): tune glass options and copy the snippet, on the docs site
+- [Getting started](https://9und30.github.io/glassy-liquid/getting-started.html): install, frameworks, SSR, and your own element, on the docs site
+- [Theming](https://9und30.github.io/glassy-liquid/theming.html): CSS custom properties and shadow parts, on the docs site
+- [Accessibility](https://9und30.github.io/glassy-liquid/accessibility.html): roles, keyboard, and reduced motion or transparency, on the docs site
+- [Browser support](https://9und30.github.io/glassy-liquid/browser-support.html): which renderer runs in which browser, on the docs site
+
+## Optional
+
+- [README](https://github.com/9und30/glassy-liquid#readme): the full guide, FAQ, and migration notes
+- [Changelog](https://github.com/9und30/glassy-liquid/blob/main/CHANGELOG.md)
+- [Issues](https://github.com/9und30/glassy-liquid/issues/new/choose): bug reports and feature requests. Pull requests are not accepted for now
+
+## API reference
+
+### Glass attributes
+
+These props are accepted on every framework component. They change the material on `<glass-surface>`, `<glass-button>`, `<glass-group>`, `<glass-tab-bar>`, and `<glass-search>`. `<glass-sheet>` applies `material`, `blur`, and `tint` to its slab, including through `::part(glass)`. `glass()` and `useGlass()` take the same fields, plus `zoom` (default `1`), `backdrop` (default `true`), and `fill`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `material` | attribute | `regular` or `clear` | `regular` | Frosted and adaptive, or transparent for media. |
+| `appearance` | attribute | `auto`, `light`, or `dark` | `auto` | `auto` reads `--glass-appearance`, then the page `color-scheme`. |
+| `radius` | attribute | number, `capsule`, or `circle` | per component | Corner radius in CSS pixels. |
+| `refraction` | attribute | number | scales with size | Maximum rim displacement in CSS pixels. |
+| `bezel` | attribute | number | `18` | Width of the refracting rim in CSS pixels. |
+| `blur` | attribute | number | material | Frost before refraction, in CSS pixels. |
+| `dispersion` | attribute | number (0 to 1) | `0.25` in WebGL, else `0` | Chromatic split at the rim. |
+| `tint` | attribute | CSS color | none | Color of tinted glass. |
+| `specular` | attribute | number (0 to 2) | `1` | Rim light strength. |
+| `lightAngle` | attribute | degrees | `-135` | Light direction. `-90` is the top. |
+| `shadow` | attribute | boolean or CSS `box-shadow` | `true` | `true` uses the material shadow. A string is used as the shadow. |
+| `profile` | attribute | `squircle`, `convex`, `lip`, or `flat` | `squircle` | Cross-section of the rim. |
+| `engine` | attribute | `auto`, `backdrop`, `scene-gl`, `scene-dom`, or `css` | `auto` | Force a renderer. Mainly for tests. |
+| `interactive` | attribute | boolean | per component | Press response: swell, light, and gel stretch. |
+
+Framework components also forward `class`, `style`, and other DOM attributes, and take `children` for the default slot. React refs and Vue `el` point at the custom element. Svelte uses `bind:element`.
+
+### Components
+
+#### GlassScene
+
+Custom element: `<glass-scene>`. Real refraction for Safari, iOS, iPadOS, and Firefox. Chromium keeps the faster page-backdrop path unless `force` is set.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `src` | attribute | string | none | Image URL. The scene creates a cover image in its shadow root. |
+| `backdrop` | attribute | string | direct child | When omitted, the direct child `[glass-backdrop]` or `[data-glass-backdrop]`. A set value is a CSS selector, queried on the scene and then on `document`. |
+| `force` | attribute | boolean | `false` | Use scene rendering even in Chromium. |
+| `mode` | attribute | `gl` or `dom` | auto | Force WebGL (`gl`) or the DOM content filter (`dom`). |
+
+Slots: default.
+
+Parts: `::part(backdrop)`.
+
+- The automatic `src` image is not a light-DOM child. Style it with `glass-scene::part(backdrop)`.
+- With no `src` and no `backdrop` selector, that direct child is the backdrop. An image, video, or canvas uses WebGL. Any other element uses the DOM content filter.
+- Glass anywhere inside the scene, including inside shadow roots, picks the scene up on its own.
+
+#### GlassSurface
+
+Custom element: `<glass-surface>`. Generic slab for cards, widgets, and bars. The default radius is 24.
+
+No component-specific props.
+
+Slots: default.
+
+Parts: `::part(glass)`.
+
+- Accepts every glass attribute. Content goes in the default slot.
+
+#### GlassButton
+
+Custom element: `<glass-button>`. iOS 26 glass button. `prominent` fills with the accent, `plain` draws no glass of its own.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `variant` | attribute | `glass`, `prominent`, or `plain` | `glass` | Visual style. |
+| `size` | attribute | `small`, `medium`, or `large` | `medium` | 32, 44, or 52 CSS pixels tall. |
+| `shape` | attribute | `capsule`, `circle`, or `rounded` | `capsule` | `rounded` uses a 12px radius unless `radius` is set. |
+| `disabled` | attribute | boolean | `false` | Disables interaction and sets `aria-disabled`. |
+| `type` | attribute | `button`, `submit`, or `reset` | `button` | Form action when the button has no `href`. |
+| `href` | attribute | string | none | Renders as a link (`role="link"`) and navigates on click. |
+| `target` | attribute | string | none | Link target. Anything other than `_self` opens with `noopener`. |
+
+Slots: default, `icon`, `trailing`.
+
+Parts: `::part(label)`, `::part(glass)`.
+
+- Native event: `click`. Enter and Space activate the button.
+- Slots: `icon`, then the default slot (the label), then `trailing`.
+- Form-associated. Inside a form, `type="submit"` calls `requestSubmit()` and `type="reset"` resets.
+- Accepts every glass attribute. Default radius is `capsule`. `interactive` is on.
+
+#### GlassSwitch
+
+Custom element: `<glass-switch>`. Toggle whose thumb lifts into a lens. Form-associated, role `switch`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `disabled` | attribute | boolean | `false` | Disables the control. |
+| `name` | attribute | string | none | Form field name. |
+| `value` | attribute | string | `on` | Value submitted when the switch is on. |
+| `checked` | property | boolean | `false` | Controlled on state. Set the property, or the `checked` attribute for the initial value. |
+| `defaultChecked` | uncontrolled `checked` | boolean | `false` | Uncontrolled initial `checked` attribute. Later updates are ignored. |
+| `onCheckedChange` | event `change` | `(checked: boolean) => void` | none | Fires when the user toggles the switch. |
+| `onChange` | event `change` | `(event: Event) => void` | none | The same DOM `change` event, passed through unchanged. |
+
+Slots: none.
+
+Parts: `::part(track)`, `::part(fill)`, `::part(thumb)`, `::part(glass)`.
+
+- Also fires `input` on a user toggle.
+- Keyboard: Space and Enter toggle. A wrapping `<label>` activates it.
+- Vue: `v-model:checked`. Svelte: `bind:checked`.
+
+#### GlassSlider
+
+Custom element: `<glass-slider>`. Slider with a thumb that magnifies into a lens while dragged. Form-associated, role `slider`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `min` | attribute | number | `0` | Range start. |
+| `max` | attribute | number | `100` | Range end. |
+| `step` | attribute | number | `0` (continuous) | Snap increment. `0` keeps the value continuous. |
+| `ticks` | attribute | boolean | `false` | Draw tick marks at each step. |
+| `disabled` | attribute | boolean | `false` | Disables the control. |
+| `name` | attribute | string | none | Form field name. |
+| `value` | property | number | `min` | Controlled value. When omitted, the value is `min`. |
+| `defaultValue` | uncontrolled `value` | number | `min` | Uncontrolled initial value. When the attribute is omitted, the value is `min`. |
+| `onValueChange` | event `input` | `(value: number) => void` | none | Fires while the value is changing. |
+| `onValueCommit` | event `change` | `(value: number) => void` | none | Fires when the user commits (pointer up or keyboard). |
+
+Slots: none.
+
+Parts: `::part(track)`, `::part(fill)`, `::part(ticks)`, `::part(thumb)`, `::part(glass)`.
+
+- Keyboard: Arrow keys nudge, Home and End jump to the ends.
+- Vue: `v-model:value`. Svelte: `bind:value`.
+
+#### GlassTabBar
+
+Custom element: `<glass-tab-bar>`. Floating tab bar. The selection is a pill that lifts into a draggable magnifying lens.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | attribute | string | first enabled item | Selected item value. When omitted, the first enabled item is selected. |
+| `onValueChange` | event `change` | `(value: string) => void` | none | Fires when the selection changes. Detail is `{ value, index }`. |
+
+Slots: default.
+
+Parts: `::part(indicator)`, `::part(lens)`, `::part(glass)`.
+
+- Children are `<glass-tab>` elements in the default slot.
+- Role `tablist`. Arrow keys, Home, and End move the selection.
+- Accepts every glass attribute. Default radius is `capsule`.
+- Vue: `v-model:value`. Svelte: `bind:value`.
+
+#### GlassSegmented
+
+Custom element: `<glass-segmented>`. Segmented control with the same selection lens, on a quiet frosted track.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | attribute | string | first enabled item | Selected item value. When omitted, the first enabled item is selected. |
+| `onValueChange` | event `change` | `(value: string) => void` | none | Fires when the selection changes. Detail is `{ value, index }`. |
+
+Slots: default.
+
+Parts: `::part(track)`, `::part(indicator)`, `::part(lens)`, `::part(glass)`.
+
+- Children are `<glass-segment>` elements in the default slot.
+- The track itself is not a glass surface. Only the lens is.
+- Vue: `v-model:value`. Svelte: `bind:value`.
+
+#### GlassTab
+
+Custom element: `<glass-tab>`. One item in a `<glass-tab-bar>`. Role `tab`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | attribute | string | index | Item value. Defaults to the child index when omitted. |
+| `disabled` | attribute | boolean | `false` | Skips the item for pointer and keyboard selection. |
+
+Slots: default.
+
+Parts: `::part(content)`.
+
+- The default slot is the label, often an icon plus text.
+
+#### GlassSegment
+
+Custom element: `<glass-segment>`. One item in a `<glass-segmented>`. Role `tab`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | attribute | string | index | Item value. Defaults to the child index when omitted. |
+| `disabled` | attribute | boolean | `false` | Skips the item for pointer and keyboard selection. |
+
+Slots: default.
+
+Parts: `::part(content)`.
+
+- The default slot is the label.
+
+#### GlassMenu
+
+Custom element: `<glass-menu>`. Pull-down menu that morphs out of its trigger. Press, drag, and release selects in one gesture.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `open` | attribute | boolean | `false` | Open state. The attribute presence opens the menu. |
+| `placement` | attribute | `bottom-start`, `bottom-end`, `bottom`, `top-start`, `top-end`, or `top` | `bottom-start` | Where the panel sits relative to the trigger. |
+| `onSelect` | event `select` | `(value: string) => void` | none | Fires when an item is chosen. Detail is `{ value, item }`. Cancelable. |
+| `onOpenChange` | event `toggle` | `(open: boolean) => void` | none | Fires when the menu opens or closes. Detail is `{ open }`. |
+
+Slots: default, `trigger`.
+
+Parts: `::part(panel)`, `::part(content)`, `::part(glass)`.
+
+- Put the trigger in the `trigger` slot. Items, labels, and separators go in the default slot.
+- The panel is glass. Set the element's `glass` property (`GlassOptions`) to tune that surface. It is not a binding prop.
+- Vue: `v-model:open`. Svelte: `bind:open`.
+
+#### GlassMenuItem
+
+Custom element: `<glass-menu-item>`. A row in a menu. Role `menuitem`, or `menuitemcheckbox` when `checked` or `checkable` is set.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `value` | attribute | string | text content | Value reported by `select`. Falls back to the trimmed text. |
+| `disabled` | attribute | boolean | `false` | Dims the row and skips it. |
+| `destructive` | attribute | boolean | `false` | Uses the destructive color. |
+| `checked` | attribute | boolean | `false` | Shows a check mark. |
+| `checkable` | attribute | boolean | `false` | Reserves space for a check even when unchecked. |
+| `group` | attribute | string | none | Items that share a group behave as a single-select set. |
+
+Slots: default, `icon`, `shortcut`.
+
+Parts: `::part(label)`.
+
+- Slots: the default slot is the label, plus optional `icon` and `shortcut`. Put icons in `icon`: they trail the row at 20px, as on iOS. An SVG or image in any slot is capped at 20px.
+
+#### GlassMenuSeparator
+
+Custom element: `<glass-menu-separator>`. A hairline between menu rows. Role `separator`.
+
+No component-specific props.
+
+Slots: none.
+
+Parts: none.
+
+- No props and no slots.
+
+#### GlassMenuLabel
+
+Custom element: `<glass-menu-label>`. A section header inside a menu. Role `presentation`.
+
+No component-specific props.
+
+Slots: none.
+
+Parts: none.
+
+- The label is light-DOM text. The element has no shadow slot.
+
+#### GlassToolbar
+
+Custom element: `<glass-toolbar>`. A row of buttons and groups with arrow-key focus. Role `toolbar`. The bar itself is not glass.
+
+No component-specific props.
+
+Slots: default.
+
+Parts: none.
+
+- Arrow keys move focus between enabled buttons, links, and switches. Home and End jump to the ends.
+- `aria-orientation="vertical"` uses ArrowUp and ArrowDown.
+
+#### GlassGroup
+
+Custom element: `<glass-group>`. One shared capsule around several controls, as in an iOS 26 toolbar.
+
+No component-specific props.
+
+Slots: default.
+
+Parts: `::part(glass)`.
+
+- Accepts every glass attribute. Default radius is `capsule`. Role `group`.
+
+#### GlassSpacer
+
+Custom element: `<glass-spacer>`. Flexible or fixed space inside a toolbar. `aria-hidden`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `size` | attribute | number | flex | Fixed width in CSS pixels. Omit it and the spacer grows. |
+
+Slots: none.
+
+Parts: none.
+
+- No slots.
+
+#### GlassSearch
+
+Custom element: `<glass-search>`. Search field on a glass capsule, with a clear button. Form-associated.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `placeholder` | attribute | string | `Search` | Placeholder and the default accessible name. |
+| `name` | attribute | string | none | Form field name. |
+| `disabled` | attribute | boolean | `false` | Disables the input. |
+| `value` | property | string | `""` | Controlled field value. |
+| `onValueChange` | event `input` | `(value: string) => void` | none | Fires on each edit, including clear. |
+| `onSearch` | event `search` | `(value: string) => void` | none | Fires when the user presses Enter. Detail is `{ value }`. |
+
+Slots: default.
+
+Parts: `::part(icon)`, `::part(input)`, `::part(clear)`, `::part(glass)`.
+
+- Also fires a native `change` event from the inner input.
+- Escape clears the field when it has text.
+- The default slot is trailing content after the clear button.
+- Accepts every glass attribute. Default radius is `capsule`.
+- Vue: `v-model:value`. Svelte: `bind:value`.
+
+#### GlassSheet
+
+Custom element: `<glass-sheet>`. Bottom sheet with detents, a grabber, drag to resize, and swipe to dismiss. Role `dialog`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `open` | attribute | boolean | `false` | Open state. |
+| `detents` | attribute | string | `medium large` | Space or comma separated `small`, `medium`, `large`, percentages, or pixel lengths. |
+| `modal` | attribute | boolean | `false` | Dim the page, block pointer input outside the sheet, and keep keyboard focus inside it. The dialog gets `aria-modal`. |
+| `noDismiss` | attribute | boolean | `false` | Keep the sheet open on scrim click, Escape, and a swipe past the last detent. |
+| `onOpenChange` | event `toggle` | `(open: boolean) => void` | none | Fires when the sheet opens or closes. Detail is `{ open }`. |
+| `onDetentChange` | event `detent` | `(index: number) => void` | none | Fires when the resting detent changes. Detail is `{ index, height }`. |
+
+Slots: default.
+
+Parts: `::part(scrim)`, `::part(sheet)`, `::part(grabber)`, `::part(body)`, `::part(glass)`.
+
+- The default slot is the sheet body.
+- `small` is 25vh, `medium` is 50vh, `large` fills the viewport inset.
+- Vue: `v-model:open`. Svelte: `bind:open`.
+
+#### GlassProgressiveBlur
+
+Custom element: `<glass-progressive-blur>`. iOS 26 scroll-edge blur. Content fades into a stronger blur toward one edge. `aria-hidden`.
+
+| Prop | Kind | Type | Default | Description |
+| --- | --- | --- | --- | --- |
+| `edge` | attribute | `top`, `bottom`, `left`, or `right` | `top` | Edge the blur grows toward. |
+| `size` | attribute | number | `96` | Thickness of the effect in CSS pixels. |
+| `blur` | attribute | number | `16` | Maximum blur in CSS pixels. |
+| `layers` | attribute | number (2 to 8) | `6` | How many stacked blur bands to paint. |
+| `tint` | attribute | CSS color | none | Optional gradient tint over the blur. |
+
+Slots: none.
+
+Parts: none.
+
+- Position it yourself (`position: fixed` or `absolute` over the scrolling content).
+- `prefers-reduced-transparency: reduce` removes the blur.
+
+### Two-way bindings
+
+Vue `v-model:*` and Svelte `bind:*` follow the same events as the React change callbacks:
+
+- `GlassSwitch`: `v-model:checked` / `bind:checked`
+- `GlassSlider`: `v-model:value` / `bind:value`
+- `GlassTabBar`: `v-model:value` / `bind:value`
+- `GlassSegmented`: `v-model:value` / `bind:value`
+- `GlassMenu`: `v-model:open` / `bind:open`
+- `GlassSearch`: `v-model:value` / `bind:value`
+- `GlassSheet`: `v-model:open` / `bind:open`
+
+## Theming
+
+```css
+/* snippet: theme */
+:root {
+  --glass-accent: #0a84ff;
+  --glass-appearance: dark;
+  --glass-font: "Inter", system-ui;
+}
+```
+
+With `appearance="auto"` (the default), glass follows `--glass-appearance`, then the page color scheme, the way native form controls do. A page that never declares `color-scheme: dark` or `color-scheme: light dark` (in CSS or `<meta name="color-scheme">`) keeps light glass in OS dark mode, so text you color yourself stays readable. Pages that support both schemes follow the OS. Theme switches on `<html>` or `<body>` (class, attribute, or style) and the meta tag are picked up automatically. After changing `--glass-appearance` or `color-scheme` on another element, call `updateAppearance()`.
+
+Glass sets `--gl-fg` and `--gl-text-shadow` on the host and both inherit. For content you color yourself inside glass, use `color: var(--gl-fg)`. Every glass element sets `data-appearance="light"` or `data-appearance="dark"`.
+
+| Property | Role |
+| --- | --- |
+| `--glass-accent` | Prominent buttons, sliders, selected tabs. Default `#007aff` (light) / `#0a84ff` (dark). |
+| `--glass-appearance` | `light` or `dark`. Wins over the page color scheme. |
+| `--glass-font` | Face used inside glass. |
+| `--glass-foreground` | Text color override. Falls back to `--gl-fg`. |
+| `--glass-text-shadow` | Text shadow override. Falls back to `--gl-text-shadow`. |
+| `--glass-focus` | Focus ring color. |
+
+Component knobs, each with a built-in default:
+
+`--glass-button-height`, `--glass-button-padding`, `--glass-button-font-size`, `--glass-on-accent`, `--glass-accent-text`, `--glass-switch-on`, `--glass-switch-off`, `--glass-slider-track`, `--glass-slider-off`, `--glass-thumb`, `--glass-tab-bar-height`, `--glass-tab-selection`, `--glass-tab-selected`, `--glass-segmented-height`, `--glass-segmented-track`, `--glass-segmented-backdrop`, `--glass-segmented-selected`, `--glass-segmented-thumb`, `--glass-selector-padding`, `--glass-item-direction`, `--glass-item-gap`, `--glass-menu-highlight`, `--glass-destructive`, `--glass-search-height`, `--glass-scrim`, `--glass-sheet-inset`, `--glass-sheet-max-width`, `--glass-sheet-padding`, `--glass-group-padding`, `--glass-toolbar-gap`.
+
+Style internals with `::part()`, listed per component in the API reference. The shared glass stack is `::part(glass)`. The scene backdrop image is `glass-scene::part(backdrop)`.
+
+Accent colors move to a readable lightness per appearance where the browser supports relative color syntax. Older browsers keep the accent as given. Prominent buttons darken the accent just enough for a 4.5:1 white label. Clear glass puts a soft halo behind its light text.
+
+## Your own element
+
+```js
+import { GlassElement } from "glassy-liquid";
+
+class NowPlaying extends GlassElement {
+  static glassDefaults = { radius: 30, material: "clear" };
+  static interactive = true;
+  static extraAttributes = ["title", "artist"];
+  static styles = `
+    :host { display: flex; gap: 14px; align-items: center; padding: 12px 18px 12px 12px; color: #fff; }
+    .art { width: 54px; height: 54px; border-radius: 14px; background: center/cover url(img/silk.webp); }
+    b { display: block; font: 600 16px/1.2 system-ui; }
+    span { font: 500 14px/1.3 system-ui; opacity: .75; }`;
+
+  render() {
+    return `<div class="art"></div><div><b></b><span></span></div>`;
+  }
+
+  // Text from attributes goes in with textContent, never into the markup string.
+  setup() {
+    this.shadow.querySelector("b").textContent = this.getAttribute("title") ?? "";
+    this.shadow.querySelector("span").textContent = this.getAttribute("artist") ?? "";
+  }
+}
+
+customElements.define("now-playing", NowPlaying);
+```
+
+## Playground useGlass
+
+The slab needs a size. The snippet sets 280 by 168. In Next.js the React file is a Client Component.
+
+```tsx
+"use client";
+// Next.js App Router: keep this file a Client Component. useGlass reads the DOM.
+import { useRef, useEffect } from "react";
+import { useGlass } from "glassy-liquid/react";
+import { attachPress } from "glassy-liquid";
+
+/* .slab {   width: 280px;   height: 168px; } */
+
+export function Slab() {
+  const ref = useRef<HTMLDivElement>(null);
+  const surface = useGlass(ref, {
+    material: "regular",
+    appearance: "light",
+    radius: 36,
+    refraction: 28,
+    bezel: 22,
+    blur: 8,
+    dispersion: 0.35,
+    specular: 1.1,
+    lightAngle: -135,
+    zoom: 1,
+    shadow: true,
+    profile: "squircle",
+  });
+
+  useEffect(() => {
+    const el = ref.current;
+    const ctrl = surface.current;
+    if (!el || !ctrl) return;
+    const press = attachPress(el, ctrl);
+    return () => press.dispose();
+  }, [surface]);
+  return (
+    <div ref={ref} className="slab" style={{ width: 280, height: 168 }}>
+      Field glass
+    </div>
+  );
+}
+```
+
+## Every component
+
+### Button
+
+Capsule, circle, or rounded. Glass by default, tinted with the accent when prominent, or plain inside a group. A press swells and lights up under the finger.
+
+Web Components:
+
+```html
+<glass-button shape="circle" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></glass-button>
+<glass-button>Edit</glass-button>
+<glass-button variant="prominent">Done</glass-button>
+```
+
+React:
+
+```tsx
+import { GlassButton } from "glassy-liquid/react";
+
+export function Buttons() {
+  return (
+    <>
+      <GlassButton shape="circle" aria-label="Back">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
+          <path d="M15 18l-6-6 6-6" />
+        </svg>
+      </GlassButton>
+      <GlassButton onClick={() => {}}>Edit</GlassButton>
+      <GlassButton variant="prominent" onClick={() => {}}>Done</GlassButton>
+    </>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { GlassButton } from "glassy-liquid/vue";
+</script>
+
+<template>
+  <GlassButton shape="circle" aria-label="Back">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  </GlassButton>
+  <GlassButton @click="() => {}">Edit</GlassButton>
+  <GlassButton variant="prominent" @click="() => {}">Done</GlassButton>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassButton } from "glassy-liquid/svelte";
+</script>
+
+<GlassButton shape="circle" aria-label="Back">
+  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true">
+    <path d="M15 18l-6-6 6-6" />
+  </svg>
+</GlassButton>
+<GlassButton onclick={() => {}}>Edit</GlassButton>
+<GlassButton variant="prominent" onclick={() => {}}>Done</GlassButton>
+```
+
+### Surface
+
+The generic slab for cards, widgets, and bars. Put anything inside. The glass sizes itself to the element and does not rebuild its maps on resize.
+
+Web Components:
+
+```html
+<glass-surface radius="34" style="width:170px;height:170px;padding:16px">
+  <small>Mountain lake</small>
+  <b>14°</b>
+</glass-surface>
+<glass-surface material="clear" radius="40" style="width:170px;height:170px"></glass-surface>
+```
+
+React:
+
+```tsx
+import { GlassSurface } from "glassy-liquid/react";
+
+export function LakeCard() {
+  return (
+    <GlassSurface radius={34} style={{ width: 170, height: 170, padding: 16 }}>
+      <small>Mountain lake</small>
+      <b>14°</b>
+    </GlassSurface>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { GlassSurface } from "glassy-liquid/vue";
+</script>
+
+<template>
+  <GlassSurface :radius="34" style="width:170px;height:170px;padding:16px">
+    <small>Mountain lake</small>
+    <b>14°</b>
+  </GlassSurface>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassSurface } from "glassy-liquid/svelte";
+</script>
+
+<GlassSurface radius={34} style="width:170px;height:170px;padding:16px">
+  <small>Mountain lake</small>
+  <b>14°</b>
+</GlassSurface>
+```
+
+### Switch
+
+The iOS 26 toggle. The thumb lifts into a clear lens while you hold it, follows a drag with rubber-banding, and lands with a soft bounce. It is form-associated.
+
+Web Components:
+
+```html
+<glass-surface radius="28" style="width:min(320px,100%);padding:6px 18px;display:flex;flex-direction:column">
+  <label class="controls__row"><span class="controls__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.4a9.5 9.5 0 0 1 13 0M8.6 15.8a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg>Wi-Fi</span><glass-switch checked name="wifi"></glass-switch></label>
+  <label class="controls__row"><span class="controls__label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.5 20.5l1.5-1 1.5 1v-4l7.5 2.5v-2.2L13.5 11V5a1.5 1.5 0 0 0-3 0v6L3 16.8V19l7.5-2.5z"/></svg>Airplane Mode</span><glass-switch name="air"></glass-switch></label>
+</glass-surface>
+```
+
+React:
+
+```tsx
+import { useState } from "react";
+import { GlassSwitch } from "glassy-liquid/react";
+
+export function WifiSwitch() {
+  const [wifi, setWifi] = useState(true);
+  return <GlassSwitch checked={wifi} onCheckedChange={setWifi} aria-label="Wi-Fi" />;
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { GlassSwitch } from "glassy-liquid/vue";
+const wifi = ref(true);
+</script>
+
+<template>
+  <GlassSwitch v-model:checked="wifi" aria-label="Wi-Fi" />
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassSwitch } from "glassy-liquid/svelte";
+  let wifi = $state(true);
+</script>
+
+<GlassSwitch bind:checked={wifi} aria-label="Wi-Fi" />
+```
+
+### Slider
+
+Drag the thumb and it turns into a magnifying lens over the track. Stepped sliders can show ticks. Keys: arrows, Page Up and Down, Home, End.
+
+Web Components:
+
+```html
+<glass-surface radius="28" style="width:min(320px,100%);padding:18px;display:flex;flex-direction:column;gap:22px">
+  <glass-slider value="62" aria-label="Brightness"></glass-slider>
+  <glass-slider value="50" step="25" ticks aria-label="Speed"></glass-slider>
+</glass-surface>
+```
+
+React:
+
+```tsx
+import { useState } from "react";
+import { GlassSlider } from "glassy-liquid/react";
+
+export function Volume() {
+  const [volume, setVolume] = useState(62);
+  const [speed, setSpeed] = useState(50);
+  return (
+    <>
+      <GlassSlider value={volume} onValueChange={(value) => setVolume(Math.round(value))} aria-label="Volume" />
+      <p>{Math.round(volume)}</p>
+      <GlassSlider value={speed} step={25} ticks onValueCommit={(value) => setSpeed(Math.round(value))} aria-label="Speed" />
+    </>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { GlassSlider } from "glassy-liquid/vue";
+const volume = ref(62);
+const speed = ref(50);
+function commit(value: number) {
+  speed.value = Math.round(value);
+}
+</script>
+
+<template>
+  <GlassSlider v-model:value="volume" aria-label="Volume" />
+  <p>{{ Math.round(volume) }}</p>
+  <GlassSlider v-model:value="speed" :step="25" ticks aria-label="Speed" @value-commit="commit" />
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassSlider } from "glassy-liquid/svelte";
+  let volume = $state(62);
+  let speed = $state(50);
+  function commit(value) {
+    speed = Math.round(value);
+  }
+</script>
+
+<GlassSlider bind:value={volume} aria-label="Volume" />
+<p>{Math.round(volume)}</p>
+<GlassSlider bind:value={speed} step={25} ticks aria-label="Speed" onValueCommit={commit} />
+```
+
+### Tab bar
+
+The floating iOS 26 tab bar. Touch it and the selection lifts into a lens you can slide across the tabs. It stretches with speed and snaps to the nearest tab.
+
+Web Components:
+
+```html
+<glass-tab-bar value="home" aria-label="Main" style="width:min(360px,100%)">
+  <glass-tab value="home"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3.2l9 8.1h-2.6V20a1 1 0 0 1-1 1h-3.6v-6.2h-3.6V21H6.6a1 1 0 0 1-1-1v-8.7H3z"/></svg>Home</glass-tab>
+  <glass-tab value="library"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="7" width="17" height="13" rx="3"/><path d="M6.5 4h11"/></svg>Library</glass-tab>
+  <glass-tab value="recent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M12 7.5V12l3 2"/></svg>Recent</glass-tab>
+  <glass-tab value="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="3.8"/><path d="M4.5 20.5c.9-3.7 3.9-5.8 7.5-5.8s6.6 2.1 7.5 5.8"/></svg>Profile</glass-tab>
+</glass-tab-bar>
+```
+
+React:
+
+```tsx
+import { useState } from "react";
+import { GlassTabBar, GlassTab } from "glassy-liquid/react";
+
+export function MainTabs() {
+  const [tab, setTab] = useState("home");
+  return (
+    <GlassTabBar value={tab} onValueChange={setTab} aria-label="Main">
+      <GlassTab value="home">Home</GlassTab>
+      <GlassTab value="library">Library</GlassTab>
+    </GlassTabBar>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { GlassTabBar, GlassTab } from "glassy-liquid/vue";
+const tab = ref("home");
+</script>
+
+<template>
+  <GlassTabBar v-model:value="tab" aria-label="Main">
+    <GlassTab value="home">Home</GlassTab>
+    <GlassTab value="library">Library</GlassTab>
+  </GlassTabBar>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassTabBar, GlassTab } from "glassy-liquid/svelte";
+  let tab = $state("home");
+</script>
+
+<GlassTabBar bind:value={tab} aria-label="Main">
+  <GlassTab value="home">Home</GlassTab>
+  <GlassTab value="library">Library</GlassTab>
+</GlassTabBar>
+```
+
+### Segmented
+
+The same lens on a quieter track. The white pill becomes glass while you drag between segments.
+
+Web Components:
+
+```html
+<glass-segmented value="week" aria-label="Range">
+  <glass-segment value="day">Day</glass-segment>
+  <glass-segment value="week">Week</glass-segment>
+  <glass-segment value="month">Month</glass-segment>
+  <glass-segment value="year">Year</glass-segment>
+</glass-segmented>
+```
+
+React:
+
+```tsx
+import { useState } from "react";
+import { GlassSegmented, GlassSegment } from "glassy-liquid/react";
+
+export function Range() {
+  const [range, setRange] = useState("week");
+  return (
+    <GlassSegmented value={range} onValueChange={setRange} aria-label="Range">
+      <GlassSegment value="day">Day</GlassSegment>
+      <GlassSegment value="week">Week</GlassSegment>
+    </GlassSegmented>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { GlassSegmented, GlassSegment } from "glassy-liquid/vue";
+const range = ref("week");
+</script>
+
+<template>
+  <GlassSegmented v-model:value="range" aria-label="Range">
+    <GlassSegment value="day">Day</GlassSegment>
+    <GlassSegment value="week">Week</GlassSegment>
+  </GlassSegmented>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassSegmented, GlassSegment } from "glassy-liquid/svelte";
+  let range = $state("week");
+</script>
+
+<GlassSegmented bind:value={range} aria-label="Range">
+  <GlassSegment value="day">Day</GlassSegment>
+  <GlassSegment value="week">Week</GlassSegment>
+</GlassSegmented>
+```
+
+### Menu
+
+A pull-down menu that morphs out of its trigger. Press, drag to an item, and release to choose in one gesture. Full keyboard support and type-ahead.
+
+Web Components:
+
+```html
+<glass-menu placement="bottom-start">
+  <glass-button slot="trigger">Sort <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></glass-button>
+  <glass-menu-label>Sort by</glass-menu-label>
+  <glass-menu-item value="name" checked group="sort">Name</glass-menu-item>
+  <glass-menu-item value="date" checkable group="sort">Date Modified</glass-menu-item>
+  <glass-menu-separator></glass-menu-separator>
+  <glass-menu-item value="share">Share <svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></glass-menu-item>
+  <glass-menu-item value="delete" destructive>Delete <svg slot="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></svg></glass-menu-item>
+</glass-menu>
+```
+
+React:
+
+```tsx
+import { GlassMenu, GlassMenuItem, GlassButton } from "glassy-liquid/react";
+
+export function SortMenu() {
+  return (
+    <GlassMenu onSelect={() => {}}>
+      <GlassButton slot="trigger">Sort</GlassButton>
+      <GlassMenuItem value="name" checked group="sort">Name</GlassMenuItem>
+      <GlassMenuItem value="delete" destructive>Delete</GlassMenuItem>
+    </GlassMenu>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { GlassMenu, GlassMenuItem, GlassButton } from "glassy-liquid/vue";
+function run(_value: string) {}
+</script>
+
+<template>
+  <GlassMenu @select="run">
+    <template #trigger>
+      <GlassButton>Sort</GlassButton>
+    </template>
+    <GlassMenuItem value="name" checked group="sort">Name</GlassMenuItem>
+    <GlassMenuItem value="delete" destructive>Delete</GlassMenuItem>
+  </GlassMenu>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassMenu, GlassMenuItem, GlassButton } from "glassy-liquid/svelte";
+  function run(_value) {}
+</script>
+
+<GlassMenu onSelect={run}>
+  <GlassButton slot="trigger">Sort</GlassButton>
+  <GlassMenuItem value="name" checked group="sort">Name</GlassMenuItem>
+  <GlassMenuItem value="delete" destructive>Delete</GlassMenuItem>
+</GlassMenu>
+```
+
+### Toolbar
+
+iOS 26 toolbars share one capsule of glass between related actions. A group holds plain buttons. Spacers push groups apart. Arrow keys move focus.
+
+Web Components:
+
+```html
+<glass-toolbar style="width:min(360px,100%)">
+  <glass-button shape="circle" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></glass-button>
+  <glass-spacer></glass-spacer>
+  <glass-group>
+    <glass-button variant="plain" shape="circle" aria-label="Share"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></glass-button>
+    <glass-button variant="plain" shape="circle" aria-label="Favorite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.6-9.2A5.3 5.3 0 0 1 12 6.2a5.3 5.3 0 0 1 9.6 5.1C19.5 15.9 12 20.5 12 20.5z"/></svg></glass-button>
+  </glass-group>
+  <glass-button shape="circle" aria-label="More"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></glass-button>
+</glass-toolbar>
+```
+
+React:
+
+```tsx
+import { GlassToolbar, GlassGroup, GlassSpacer, GlassButton } from "glassy-liquid/react";
+
+export function EditorBar() {
+  return (
+    <GlassToolbar>
+      <GlassButton shape="circle" aria-label="Back">Back</GlassButton>
+      <GlassSpacer />
+      <GlassGroup>
+        <GlassButton variant="plain" shape="circle" aria-label="Share">Share</GlassButton>
+      </GlassGroup>
+    </GlassToolbar>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { GlassToolbar, GlassGroup, GlassSpacer, GlassButton } from "glassy-liquid/vue";
+</script>
+
+<template>
+  <GlassToolbar>
+    <GlassButton shape="circle" aria-label="Back">Back</GlassButton>
+    <GlassSpacer />
+    <GlassGroup>
+      <GlassButton variant="plain" shape="circle" aria-label="Share">Share</GlassButton>
+    </GlassGroup>
+  </GlassToolbar>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassToolbar, GlassGroup, GlassSpacer, GlassButton } from "glassy-liquid/svelte";
+</script>
+
+<GlassToolbar>
+  <GlassButton shape="circle" aria-label="Back">Back</GlassButton>
+  <GlassSpacer />
+  <GlassGroup>
+    <GlassButton variant="plain" shape="circle" aria-label="Share">Share</GlassButton>
+  </GlassGroup>
+</GlassToolbar>
+```
+
+### Search
+
+A capsule field with a clear button. Enter fires a search event. Escape clears. It participates in forms the way a native input does.
+
+Web Components:
+
+```html
+<div class="row" style="width:min(360px,100%)">
+  <glass-search placeholder="Search fruit" aria-label="Search fruit" style="flex:1"></glass-search>
+  <glass-button shape="circle" aria-label="Dictate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></glass-button>
+</div>
+```
+
+React:
+
+```tsx
+import { useState } from "react";
+import { GlassSearch } from "glassy-liquid/react";
+
+export function FruitSearch() {
+  const [query, setQuery] = useState("");
+  return (
+    <GlassSearch
+      value={query}
+      onValueChange={setQuery}
+      onSearch={() => {}}
+      placeholder="Search fruit"
+      aria-label="Search fruit"
+    />
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { GlassSearch } from "glassy-liquid/vue";
+const query = ref("");
+function submit(_value: string) {}
+</script>
+
+<template>
+  <GlassSearch v-model:value="query" placeholder="Search fruit" aria-label="Search fruit" @search="submit" />
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassSearch } from "glassy-liquid/svelte";
+  let query = $state("");
+  function submit(_value) {}
+</script>
+
+<GlassSearch bind:value={query} placeholder="Search fruit" aria-label="Search fruit" onSearch={submit} />
+```
+
+### Sheet
+
+A floating bottom sheet with detents. Drag the grabber to resize. Flick down to dismiss. Escape closes it and focus returns to the trigger.
+
+Web Components:
+
+```html
+<glass-button variant="prominent" id="open-demo-sheet">Show sheet</glass-button>
+<glass-sheet id="demo-sheet" detents="medium large" aria-label="Trip details">
+  <h3>Mountain lake</h3>
+  <p>Drag the grabber to resize. Flick down to close.</p>
+</glass-sheet>
+<script>
+  document.getElementById("open-demo-sheet").addEventListener("click", () => {
+    document.getElementById("demo-sheet").open = true;
+  });
+</script>
+```
+
+React:
+
+```tsx
+import { useState } from "react";
+import { GlassSheet, GlassButton } from "glassy-liquid/react";
+
+export function TripSheet() {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <GlassButton variant="prominent" onClick={() => setOpen(true)}>Show sheet</GlassButton>
+      <GlassSheet open={open} onOpenChange={setOpen} detents="medium large" aria-label="Trip details">
+        <h3>Mountain lake</h3>
+      </GlassSheet>
+    </>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { ref } from "vue";
+import { GlassSheet, GlassButton } from "glassy-liquid/vue";
+const open = ref(false);
+</script>
+
+<template>
+  <GlassButton variant="prominent" @click="open = true">Show sheet</GlassButton>
+  <GlassSheet v-model:open="open" detents="medium large" aria-label="Trip details">
+    <h3>Mountain lake</h3>
+  </GlassSheet>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassSheet, GlassButton } from "glassy-liquid/svelte";
+  let open = $state(false);
+</script>
+
+<GlassButton variant="prominent" onclick={() => (open = true)}>Show sheet</GlassButton>
+<GlassSheet bind:open={open} detents="medium large" aria-label="Trip details">
+  <h3>Mountain lake</h3>
+</GlassSheet>
+```
+
+### Scroll edge
+
+The iOS 26 scroll-edge effect. Content dissolves into a growing blur under floating bars instead of hitting a hard divider. Scroll the list.
+
+Web Components:
+
+```html
+<div style="position:relative;width:min(340px,100%);height:280px;border-radius:26px;overflow:hidden">
+  <div style="height:100%;overflow:auto;padding:76px 14px 14px;display:grid;gap:10px">
+    <glass-surface radius="18" style="padding:14px 16px">Clear, 14°</glass-surface>
+    <glass-surface radius="18" style="padding:14px 16px">Bright, 12°</glass-surface>
+    <glass-surface radius="18" style="padding:14px 16px">High cloud, 9°</glass-surface>
+    <glass-surface radius="18" style="padding:14px 16px">Still, 11°</glass-surface>
+    <glass-surface radius="18" style="padding:14px 16px">Cold, 8°</glass-surface>
+  </div>
+  <glass-progressive-blur edge="top" size="92"></glass-progressive-blur>
+  <glass-toolbar style="position:absolute;top:12px;left:12px;right:12px">
+    <glass-button size="small">Today</glass-button>
+    <glass-spacer></glass-spacer>
+    <glass-button size="small" shape="circle" aria-label="Add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></glass-button>
+  </glass-toolbar>
+</div>
+```
+
+React:
+
+```tsx
+import { GlassProgressiveBlur, GlassToolbar, GlassButton, GlassSurface } from "glassy-liquid/react";
+
+export function ScrollEdge() {
+  return (
+    <div style={{ position: "relative", width: 340, height: 280, borderRadius: 26, overflow: "hidden" }}>
+      <div style={{ height: "100%", overflow: "auto", padding: "76px 14px 14px", display: "grid", gap: 10 }}>
+        <GlassSurface radius={18} style={{ padding: "14px 16px" }}>Clear, 14°</GlassSurface>
+        <GlassSurface radius={18} style={{ padding: "14px 16px" }}>Bright, 12°</GlassSurface>
+        <GlassSurface radius={18} style={{ padding: "14px 16px" }}>Still, 11°</GlassSurface>
+      </div>
+      <GlassProgressiveBlur edge="top" size={92} />
+      <GlassToolbar style={{ position: "absolute", top: 12, left: 12, right: 12 }}>
+        <GlassButton size="small">Today</GlassButton>
+      </GlassToolbar>
+    </div>
+  );
+}
+```
+
+Vue:
+
+```vue
+<script setup lang="ts">
+import { GlassProgressiveBlur, GlassToolbar, GlassButton, GlassSurface } from "glassy-liquid/vue";
+</script>
+
+<template>
+  <div style="position: relative; width: 340px; height: 280px; border-radius: 26px; overflow: hidden">
+    <div style="height: 100%; overflow: auto; padding: 76px 14px 14px; display: grid; gap: 10px">
+      <GlassSurface :radius="18" style="padding: 14px 16px">Clear, 14°</GlassSurface>
+      <GlassSurface :radius="18" style="padding: 14px 16px">Bright, 12°</GlassSurface>
+      <GlassSurface :radius="18" style="padding: 14px 16px">Still, 11°</GlassSurface>
+    </div>
+    <GlassProgressiveBlur edge="top" :size="92" />
+    <GlassToolbar style="position: absolute; top: 12px; left: 12px; right: 12px">
+      <GlassButton size="small">Today</GlassButton>
+    </GlassToolbar>
+  </div>
+</template>
+```
+
+Svelte:
+
+```svelte
+<script>
+  import { GlassProgressiveBlur, GlassToolbar, GlassButton, GlassSurface } from "glassy-liquid/svelte";
+</script>
+
+<div style="position: relative; width: 340px; height: 280px; border-radius: 26px; overflow: hidden">
+  <div style="height: 100%; overflow: auto; padding: 76px 14px 14px; display: grid; gap: 10px">
+    <GlassSurface radius={18} style="padding: 14px 16px">Clear, 14°</GlassSurface>
+    <GlassSurface radius={18} style="padding: 14px 16px">Bright, 12°</GlassSurface>
+    <GlassSurface radius={18} style="padding: 14px 16px">Still, 11°</GlassSurface>
+  </div>
+  <GlassProgressiveBlur edge="top" size={92} />
+  <GlassToolbar style="position: absolute; top: 12px; left: 12px; right: 12px">
+    <GlassButton size="small">Today</GlassButton>
+  </GlassToolbar>
+</div>
+```

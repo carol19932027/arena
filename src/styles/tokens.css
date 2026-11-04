@@ -1,0 +1,193 @@
+/**
+ * iOS 27 Liquid Glass — Design Tokens
+ * All CSS custom properties for the application.
+ * Follows glassy-liquid --glass-* conventions plus --ios27-* project tokens.
+ */
+
+/* ===== Color Palette ===== */
+:root {
+  /* Backgrounds */
+  --ios27-bg-primary: #ffffff;
+  --ios27-bg-secondary: #f2f2f7;
+  --ios27-bg-tertiary: #e5e5ea;
+
+  /* Accent */
+  --ios27-accent: #007aff;
+  --ios27-accent-hover: #0056b3;
+  --ios27-accent-active: #003d80;
+
+  /* Text */
+  --ios27-text-primary: #000000;
+  --ios27-text-secondary: #3c3c43;
+  --ios27-text-tertiary: #8e8e93;
+  --ios27-text-inverse: #ffffff;
+
+  /* Borders */
+  --ios27-border: #d1d1d6;
+  --ios27-border-light: #e5e5ea;
+
+  /* Semantic */
+  --ios27-success: #34c759;
+  --ios27-warning: #ffcc00;
+  --ios27-destructive: #ff3b30;
+  --ios27-info: #007aff;
+
+  /* Glass */
+  --ios27-glass-tint-light: rgba(255, 255, 255, 0.78);
+  --ios27-glass-tint-dark: rgba(0, 0, 0, 0.68);
+  --ios27-glass-blur: 20px;
+  --ios27-glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.12);
+}
+
+/* Dark mode overrides */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ios27-bg-primary: #000000;
+    --ios27-bg-secondary: #1c1c1e;
+    --ios27-bg-tertiary: #2c2c2e;
+    --ios27-accent: #0a84ff;
+    --ios27-accent-hover: #208df4;
+    --ios27-accent-active: #0a6ede;
+    --ios27-text-primary: #ffffff;
+    --ios27-text-secondary: #ebebf5;
+    --ios27-text-tertiary: #636366;
+    --ios27-text-inverse: #000000;
+    --ios27-border: #38383a;
+    --ios27-border-light: #2c2c2e;
+    --ios27-success: #30d158;
+    --ios27-warning: #ffd60a;
+    --ios27-destructive: #ff453a;
+    --ios27-info: #0a84ff;
+    --ios27-glass-tint-dark: rgba(255, 255, 255, 0.18);
+    --ios27-glass-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* ===== Typography (Vazirmatn for Persian, system-ui for Latin) ===== */
+:root {
+  --ios27-font-sans: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ios27-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Sizes */
+  --ios27-text-large-title: 34px;
+  --ios27-text-title1: 28px;
+  --ios27-text-title2: 22px;
+  --ios27-text-title3: 20px;
+  --ios27-text-headline: 17px;
+  --ios27-text-body: 17px;
+  --ios27-text-callout: 16px;
+  --ios27-text-subhead: 15px;
+  --ios27-text-footnote: 13px;
+  --ios27-text-caption1: 12px;
+  --ios27-text-caption2: 11px;
+
+  /* Weights */
+  --ios27-font-weight-regular: 400;
+  --ios27-font-weight-medium: 500;
+  --ios27-font-weight-semibold: 600;
+  --ios27-font-weight-bold: 700;
+
+  /* Line heights */
+  --ios27-line-height-tight: 1.15;
+  --ios27-line-height-normal: 1.4;
+  --ios27-line-height-relaxed: 1.5;
+}
+
+/* ===== Spacing ===== */
+:root {
+  --ios27-space-xs: 4px;
+  --ios27-space-sm: 8px;
+  --ios27-space-md: 12px;
+  --ios27-space-lg: 16px;
+  --ios27-space-xl: 20px;
+  --ios27-space-xxl: 24px;
+  --ios27-space-xxxl: 32px;
+  --ios27-space-safe-top: env(safe-area-inset-top, 0px);
+  --ios27-space-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --ios27-space-safe-left: env(safe-area-inset-left, 0px);
+  --ios27-space-safe-right: env(safe-area-inset-right, 0px);
+}
+
+/* ===== Border Radius ===== */
+:root {
+  --ios27-radius-sm: 8px;
+  --ios27-radius-md: 12px;
+  --ios27-radius-lg: 16px;
+  --ios27-radius-xl: 24px;
+  --ios27-radius-circle: 50%;
+}
+
+/* ===== Elevation / Shadow ===== */
+:root {
+  --ios27-elev-none: none;
+  --ios27-elev-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --ios27-elev-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --ios27-elev-lg: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
+  --ios27-elev-xl: 0 20px 40px -15px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== Animation / Transition ===== */
+:root {
+  --ios27-transition-fast: 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ios27-transition-normal: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ios27-transition-slow: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ios27-transition-spring: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== Z-Index Scale ===== */
+:root {
+  --ios27-z-bottom-sheet: 100;
+  --ios27-z-modal: 200;
+  --ios27-z-toast: 300;
+  --ios27-z-navbar: 50;
+  --ios27-z-tabbar: 60;
+}
+
+/* ===== glassy-liquid CSS Variable Overrides ===== */
+:root {
+  --glass-button-height: 44px;
+  --glass-button-padding: 0 var(--ios27-space-lg);
+  --glass-button-font-size: var(--ios27-text-headline);
+  --glass-tab-bar-height: 72px;
+  --glass-sheet-inset: 16px;
+  --glass-sheet-padding: var(--ios27-space-lg);
+  --glass-focus: var(--ios27-accent);
+}
+
+/* ===== RTL Adjustments ===== */
+[dir="rtl"] {
+  /* RTL-specific adjustments can go here */
+  --ios27-text-align-start: right;
+  --ios27-text-align-end: left;
+}
+
+[dir="ltr"] {
+  --ios27-text-align-start: left;
+  --ios27-text-align-end: right;
+}
+
+/* ===== Reduced Motion / Transparency ===== */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ios27-transition-fast: 0.01s;
+    --ios27-transition-normal: 0.01s;
+    --ios27-transition-slow: 0.01s;
+    --ios27-transition-spring: 0.01s;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01s !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --ios27-glass-tint-light: rgba(255, 255, 255, 0.95);
+    --ios27-glass-tint-dark: rgba(0, 0, 0, 0.95);
+    --ios27-glass-blur: 0px;
+  }
+}
